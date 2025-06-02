@@ -22,6 +22,9 @@ export class CollectionsService {
 			orderBy: {
 				createdAt: 'desc'
 			},
+			include: {
+				collection: true
+			},
 			take: 6,
 		})
 	}
@@ -33,6 +36,21 @@ export class CollectionsService {
 			},
 			orderBy: {
 				createdAt: 'desc'
+			},
+			include: {
+				collection: true
+			},
+			take: 6,
+		})
+	}
+
+	async getNewest() {
+		return this.db.product.findMany({
+			orderBy: {
+				createdAt: 'desc'
+			},
+			include: {
+				collection: true
 			},
 			take: 6,
 		})

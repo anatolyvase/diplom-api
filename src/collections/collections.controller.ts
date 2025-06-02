@@ -22,6 +22,11 @@ export class CollectionsController {
     return this.collectionsService.getMaleCollection();
   }
 
+  @Get('/new')
+  getNewestProducts() {
+    return this.collectionsService.getNewest();
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.collectionsService.findOne(id);

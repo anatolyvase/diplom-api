@@ -6,12 +6,19 @@ export class ProductsService {
   constructor(private readonly db: DatabaseService) {
   }
   async findAll() {
-    return this.db.product.findMany()
+    return this.db.product.findMany({
+      include: {
+        collection: true
+      },
+    })
   }
 
   async findOne(id: string) {
     const product = await this.db.product.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        collection: true
+      },
     })
 
     if (!product) {
