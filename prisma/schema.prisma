@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id           String         @id @default(uuid())
+  title        String
+  price        Float
+  imageUrl     String         @map("image_url")
+  sex          Sex
+  collectionId String         @map("collection_id")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  collection   Collection     @relation(references: [id], fields: [collectionId])
+  baskets      Basket[]
+  OrderProduct OrderProduct[]
+
+  @@map("products")
+}
+
+model Collection {
+  id        String    @id @default(uuid())
+  title     String
+  createdAt DateTime  @default(now()) @map("created_at")
+  products  Product[]
+
+  @@map("collections")
+}
+
+model User {
+  id        String @id @default(uuid())
+  email     String @unique
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+  password  String
+
+  joinedAt DateTime @default(now()) @map("joined_at")
+  basket   Basket?
+  orders   Order[]
+
+  @@map("users")
+}
+
+model Basket {
+  userId    String @unique @map("user_id")
+  productId String @map("product_id")
+
+  user    User    @relation(references: [id], fields: [userId])
+  product Product @relation(references: [id], fields: [productId])
+
+  @@id([productId, userId])
+  @@map("baskets")
+}
+
+model Order {
+  id         String         @id @default(uuid())
+  createdAt  DateTime       @default(now()) @map("created_at")
+  status     String
+  userId     String
+  user       User           @relation(references: [id], fields: [userId])
+  totalPrice Float          @map("total_price")
+  products   OrderProduct[]
+
+  @@map("orders")
+}
+
+model OrderProduct {
+  orderId   String @map("order_id")
+  productId String @map("product_id")
+
+  order   Order   @relation(references: [id], fields: [orderId])
+  product Product @relation(references: [id], fields: [productId])
+
+  @@id([orderId, productId])
+  @@map("order_product")
+}
+
+enum Sex {
+  MALE
+  FEMALE
+}
