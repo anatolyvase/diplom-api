@@ -9,7 +9,7 @@ export class OrdersService {
 	}
 
 	async create(createOrderDto: CreateOrderDto, userId: string) {
-		const products = await this.productsService.findManyByIds(createOrderDto.products)
+		const products = await this.productsService.findManyByIds(createOrderDto.products.map(item => item.id));
 		if (products.length !== createOrderDto.products.length || products.length === 0) {
 			throw new NotFoundException(`Products not found!`);
 		}
@@ -22,8 +22,9 @@ export class OrdersService {
 					totalPrice: products.reduce((acc, cur) => acc + cur.price, 0),
 					products: {
 						createMany: {
-							data: createOrderDto.products.map(productId => ({
-								productId: productId
+							data: createOrderDto.products.map(({ id, quantity }) => ({
+								productId: id,
+								quantity
 							}))
 						}
 					}

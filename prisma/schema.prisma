@@ -78,6 +78,7 @@ model Order {
 model OrderProduct {
   orderId   String @map("order_id")
   productId String @map("product_id")
+  quantity  Int    @default(1)
 
   order   Order   @relation(references: [id], fields: [orderId])
   product Product @relation(references: [id], fields: [productId])
