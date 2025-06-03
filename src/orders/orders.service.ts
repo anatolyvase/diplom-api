@@ -50,7 +50,7 @@ export class OrdersService {
 		});
 
 		return orders.map(order => {
-			const products = order.products.map(e => e.product)
+			const products = order.products.map(({ product, quantity }) => ({ ...product, quantity }));
 
 			return { ...order, products };
 		})
